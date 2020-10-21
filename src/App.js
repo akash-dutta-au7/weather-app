@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import axios from "axios";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      coords: {
+        latitude: 0,
+        longitude: 0,
+      },
+    };
+  }
+  componentDidMount() {
+    const { latitude, longitude } = this.state.coords;
+    let apiUrl = `http://api.weatherstack.com/current?access_key=dee5627cc85a3d99ce9de01bc45a9129&query=${latitude},${longitude}`;
+
+    //get geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        let newCoords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        this.setState({
+          coords: newCoords,
+        });
+
+        const response = await axios.get(apiUrl);
+        console.log(response.data);
+      });
+    } else {
+      console.log("Not supported");
+    }
+  }
+  render() {
+    return <div className="App"></div>;
+  }
 }
 
 export default App;
